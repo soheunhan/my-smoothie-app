@@ -1,8 +1,10 @@
 'use client';
 import { useState } from 'react';
-import { Ingredient } from '@/lib/types/smoothie';
-
-export default function NewSmoothie() {
+import { Ingredient, Smoothie } from '@/lib/types/smoothie';
+type NewSmoothieProp = {
+  handleAddSmoothie: (smoothie: Smoothie) => void;
+};
+export default function NewSmoothie({ handleAddSmoothie }: NewSmoothieProp) {
   const [name, setName] = useState('');
   const [ingredients, setIngredients] = useState<Ingredient[]>([
     { name: '', quantity: '', unit: 'cup(s)' },
@@ -52,7 +54,8 @@ export default function NewSmoothie() {
       setError('Please fill in all ingredient fields');
       return;
     }
-    console.log({ name, ingredients });
+
+    handleAddSmoothie({ name, ingredients });
     setName('');
     setIngredients([{ name: '', quantity: '', unit: 'cup(s)' }]);
   };
