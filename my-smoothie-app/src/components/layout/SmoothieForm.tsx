@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
-import { Ingredient, Smoothie } from '@/lib/types/smoothie';
+import { SmoothieIngredient, Smoothie } from '@/lib/types/smoothie';
+import { addSmoothies } from '@/app/actions';
 
 type SmoothieFormProps = {
   initialSmoothie?: Smoothie;
@@ -14,13 +15,12 @@ export default function SmoothieForm({
   handleCancel,
 }: SmoothieFormProps) {
   const [name, setName] = useState('');
-  const [ingredients, setIngredients] = useState<Ingredient[]>([
-    { name: '', quantity: '', unit: 'cup(s)' },
+  const [ingredients, setIngredients] = useState<SmoothieIngredient[]>([
+    { smoothieIngredientId: null, name: '', quantity: 0, unit: 'cup(s)' },
   ]);
   const [error, setError] = useState('');
 
   const units = ['cup(s)', 'oz', 'tbsp(s)'];
-
   // Initialize form with existing smoothie data if provided
   useEffect(() => {
     if (initialSmoothie) {
@@ -32,7 +32,7 @@ export default function SmoothieForm({
   const handleAddIngredient = () => {
     setIngredients([
       ...ingredients,
-      { name: '', quantity: '', unit: 'cup(s)' },
+      { smoothieIngredientId: null, name: '', quantity: 0, unit: 'cup(s)' },
     ]);
   };
 
@@ -42,7 +42,7 @@ export default function SmoothieForm({
 
   const handleIngredientChange = (
     index: number,
-    key: keyof Ingredient,
+    key: keyof SmoothieIngredient,
     value: string
   ) => {
     const newIngredients = ingredients.map((ingredient, i) => {
@@ -54,7 +54,7 @@ export default function SmoothieForm({
     setIngredients(newIngredients);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
 
@@ -64,19 +64,22 @@ export default function SmoothieForm({
     }
 
     const hasEmptyIngredient = ingredients.some(
-      (ing) => !ing.name.trim() || !ing.quantity.trim()
+      (ing) => !ing.name.trim() || !ing.quantity
     );
     if (hasEmptyIngredient) {
       setError('Please fill in all ingredient fields');
       return;
     }
-
-    handleAddSmoothie({ name, ingredients });
+    const smoothieId = initialSmoothie ? initialSmoothie.smoothieId : null;
+    await addSmoothies({ smoothieId, name, ingredients });
+    handleAddSmoothie({ smoothieId, name, ingredients });
 
     // Only reset form if it's not being used for editing
     if (!initialSmoothie) {
       setName('');
-      setIngredients([{ name: '', quantity: '', unit: 'cup(s)' }]);
+      setIngredients([
+        { smoothieIngredientId: null, name: '', quantity: 0, unit: 'cup(s)' },
+      ]);
     }
   };
 

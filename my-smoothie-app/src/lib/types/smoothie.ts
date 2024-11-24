@@ -1,13 +1,14 @@
-export interface Ingredient {
+export type MeasurementUnit = 'cup(s)' | 'oz' | 'tbsp(s)';
+
+export interface SmoothieIngredient {
+  smoothieIngredientId: number | null;
   name: string;
-  quantity: string;
+  quantity: number;
   unit: MeasurementUnit;
 }
 
-export type MeasurementUnit = 'cup(s)' | 'oz' | 'tbsp(s)';
-
-// Main smoothie recipe interface
 export interface Smoothie {
+  smoothieId: number | null;
   name: string;
-  ingredients: Ingredient[];
+  ingredients: SmoothieIngredient[];
 }

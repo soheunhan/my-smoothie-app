@@ -1,20 +1,46 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import SmoothieList from '@/components/layout/SmoothieList';
 import SmoothieForm from '@/components/layout/SmoothieForm';
 import { Smoothie } from '@/lib/types/smoothie';
-import { deleteAuthCookie } from '@/app/actions';
+import {
+  deleteAuthCookie,
+  getUserSmoothies,
+  deleteSmoothie,
+} from '@/app/actions';
 
 export default function Home() {
   const [smoothies, setSmoothies] = useState<Smoothie[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
+
+  useEffect(() => {
+    const fetchSmoothies = async () => {
+      try {
+        setLoading(true);
+        const data = await getUserSmoothies();
+        setSmoothies(data);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : 'Failed to load smoothies'
+        );
+        console.error('Error fetching smoothies:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSmoothies();
+  }, []);
 
   const handleAddSmoothie = (newSmoothie: Smoothie) => {
     setSmoothies((prev) => [...prev, newSmoothie]);
   };
 
-  const handleDeleteSmoothie = (index: number) => {
+  const handleDeleteSmoothie = async (index: number) => {
+    await deleteSmoothie(smoothies[index].smoothieId);
     setSmoothies((prev) => prev.filter((_, i) => i !== index));
   };
 
