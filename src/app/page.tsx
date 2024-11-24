@@ -12,8 +12,8 @@ import {
 
 export default function Home() {
   const [smoothies, setSmoothies] = useState<Smoothie[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const [, setLoading] = useState(true);
+  const [, setError] = useState<string | null>(null);
   const router = useRouter();
 
   useEffect(() => {
