@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
-import NewSmoothie from '@/components/layout/NewSmoothie';
 import SmoothieList from '@/components/layout/SmoothieList';
+import SmoothieForm from '@/components/layout/SmoothieForm';
 import { Smoothie } from '@/lib/types/smoothie';
 
 export default function Home() {
@@ -24,7 +24,7 @@ export default function Home() {
       <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
         <div>
           <h2 className="text-2xl font-bold mb-6">Create New Smoothie</h2>
-          <NewSmoothie handleAddSmoothie={handleAddSmoothie} />
+          <SmoothieForm handleAddSmoothie={handleAddSmoothie} />
         </div>
         <div>
           <h2 className="text-2xl font-bold mb-6">My Smoothies</h2>
