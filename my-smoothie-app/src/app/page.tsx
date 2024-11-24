@@ -54,14 +54,17 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen p-8 pb-20 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <div>
-          <h2 className="text-2xl font-bold mb-6">Create New Smoothie</h2>
-          <SmoothieForm handleAddSmoothie={handleAddSmoothie} />
+    <div className="min-h-screen p-8 pb-20 sm:p-20">
+      <main className="flex flex-col gap-8 items-center justify-center">
+        <div className="p-20 bg-lilac-100 rounded-3xl w-4/5">
+          <h2 className="mb-6">Create New Smoothie</h2>
+          <SmoothieForm
+            handleAddSmoothie={handleAddSmoothie}
+            existingSmoothies={smoothies}
+          />
         </div>
-        <div>
-          <h2 className="text-2xl font-bold mb-6">My Smoothies</h2>
+        <div className="p-20 bg-green-300 rounded-3xl text-background w-4/5">
+          <h2 className="mb-6">My Smoothies</h2>
           <SmoothieList
             smoothies={smoothies}
             handleDeleteSmoothie={handleDeleteSmoothie}
@@ -69,8 +72,10 @@ export default function Home() {
           />
         </div>
       </main>
-      <footer className="mt-20">
-        <button onClick={handleSignOut}>Sign Out</button>
+      <footer className="mt-20 flex items-center justify-center">
+        <button onClick={handleSignOut} className="font-bold text-xl">
+          Sign Out
+        </button>
       </footer>
     </div>
   );

@@ -7,27 +7,47 @@ type SmoothieFormProps = {
   initialSmoothie?: Smoothie;
   handleAddSmoothie: (smoothie: Smoothie) => void;
   handleCancel?: () => void;
+  existingSmoothies: Smoothie[]; // New prop to check for duplicate names
 };
 
 export default function SmoothieForm({
   initialSmoothie,
   handleAddSmoothie,
   handleCancel,
+  existingSmoothies,
 }: SmoothieFormProps) {
   const [name, setName] = useState('');
   const [ingredients, setIngredients] = useState<SmoothieIngredient[]>([
     { smoothieIngredientId: null, name: '', quantity: 0, unit: 'cup(s)' },
   ]);
-  const [error, setError] = useState('');
+  const [submitError, setSubmitError] = useState('');
+  const [nameError, setNameError] = useState('');
 
   const units = ['cup(s)', 'oz', 'tbsp(s)'];
-  // Initialize form with existing smoothie data if provided
+
   useEffect(() => {
     if (initialSmoothie) {
       setName(initialSmoothie.name);
       setIngredients(initialSmoothie.ingredients);
     }
   }, [initialSmoothie]);
+
+  const checkDuplicateName = (smoothieName: string): boolean => {
+    const normalizedName = smoothieName.trim().toLowerCase();
+    return existingSmoothies.some(
+      (smoothie) =>
+        smoothie.name.toLowerCase() === normalizedName &&
+        smoothie.smoothieId !== initialSmoothie?.smoothieId // Exclude current smoothie when editing
+    );
+  };
+
+  const handleNameChange = (newName: string) => {
+    setName(newName);
+    setNameError('');
+    if (newName.trim() && checkDuplicateName(newName)) {
+      setNameError('A smoothie with this name already exists');
+    }
+  };
 
   const handleAddIngredient = () => {
     setIngredients([
@@ -56,10 +76,15 @@ export default function SmoothieForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    setSubmitError('');
 
     if (!name.trim()) {
-      setError('Please enter a smoothie name');
+      setSubmitError('Please enter a smoothie name');
+      return;
+    }
+
+    if (checkDuplicateName(name)) {
+      setSubmitError('A smoothie with this name already exists');
       return;
     }
 
@@ -67,14 +92,14 @@ export default function SmoothieForm({
       (ing) => !ing.name.trim() || !ing.quantity
     );
     if (hasEmptyIngredient) {
-      setError('Please fill in all ingredient fields');
+      setSubmitError('Please fill in all ingredient fields');
       return;
     }
+
     const smoothieId = initialSmoothie ? initialSmoothie.smoothieId : null;
     await addSmoothies({ smoothieId, name, ingredients });
     handleAddSmoothie({ smoothieId, name, ingredients });
 
-    // Only reset form if it's not being used for editing
     if (!initialSmoothie) {
       setName('');
       setIngredients([
@@ -84,22 +109,31 @@ export default function SmoothieForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
       <div>
-        <label htmlFor="smoothie-name">Smoothie Name</label>
+        <label htmlFor="smoothie-name" className="font-bold">
+          Smoothie Name
+        </label>
         <input
           id="smoothie-name"
           type="text"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => handleNameChange(e.target.value)}
           placeholder="Enter smoothie name"
-          className="w-full"
+          className={`w-full ${
+            nameError ? 'border-red-500' : ''
+          } mt-2 py-1 px-4 rounded-full text-foreground`}
         />
+        {nameError && (
+          <div className="text-red-500 text-sm mt-1">{nameError}</div>
+        )}
       </div>
 
       <div>
-        <div className="flex justify-between items-center">
-          <label>Ingredients</label>
+        <div className="flex justify-between items-center mb-2">
+          <label htmlFor="ingredients" className="font-bold">
+            Ingredients
+          </label>
           <button
             type="button"
             onClick={handleAddIngredient}
@@ -109,7 +143,7 @@ export default function SmoothieForm({
           </button>
         </div>
 
-        <ul className="space-y-2">
+        <ul className="flex flex-col gap-4">
           {ingredients.map((ingredient, index) => (
             <li key={`ingredient-${index}`} className="flex gap-2 items-center">
               <input
@@ -119,7 +153,7 @@ export default function SmoothieForm({
                   handleIngredientChange(index, 'name', e.target.value)
                 }
                 placeholder="Ingredient name"
-                className="flex-1"
+                className="flex-1 py-1 px-4 rounded-full text-foreground"
               />
               <input
                 type="number"
@@ -130,14 +164,14 @@ export default function SmoothieForm({
                 placeholder="Amount"
                 min="0"
                 step="0.1"
-                className="w-24"
+                className="w-24 py-1 px-4 rounded-full text-foreground"
               />
               <select
                 value={ingredient.unit}
                 onChange={(e) =>
                   handleIngredientChange(index, 'unit', e.target.value)
                 }
-                className="w-24"
+                className="w-24 py-1 px-4 rounded-full text-foreground"
               >
                 {units.map((unit) => (
                   <option key={unit} value={unit}>
@@ -158,12 +192,25 @@ export default function SmoothieForm({
         </ul>
       </div>
 
-      {error && <div className="text-red-500">{error}</div>}
+      {submitError && <div className="text-red-500">{submitError}</div>}
 
-      <div className="flex gap-2">
-        <button type="submit">{initialSmoothie ? 'Update' : 'Save'}</button>
+      <div className="flex gap-2 mt-6">
+        <button
+          type="submit"
+          className={`${
+            handleCancel
+              ? 'w-1/2 p-2 bg-background text-foreground'
+              : 'w-full p-4 bg-foreground text-white'
+          }  rounded-full font-bold`}
+        >
+          {initialSmoothie ? 'Update' : 'Save'}
+        </button>
         {handleCancel && (
-          <button type="button" onClick={handleCancel}>
+          <button
+            type="button"
+            onClick={handleCancel}
+            className="w-1/2 border-background border p-2 rounded-full"
+          >
             Cancel
           </button>
         )}
