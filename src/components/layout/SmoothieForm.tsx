@@ -103,9 +103,13 @@ export default function SmoothieForm({
 
     // Save smoothie and reset states form if new
     const smoothieId = initialSmoothie ? initialSmoothie.smoothieId : null;
-    await addSmoothies({ smoothieId, name, ingredients });
-    handleAddSmoothie({ smoothieId, name, ingredients });
+    const result = await addSmoothies({ smoothieId, name, ingredients });
 
+    if ('success' in result && result.success && result.smoothie) {
+      handleAddSmoothie(result.smoothie);
+    }
+
+    console.log(existingSmoothies);
     if (!initialSmoothie) {
       setName('');
       setIngredients([
