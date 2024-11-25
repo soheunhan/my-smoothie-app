@@ -23,7 +23,7 @@ export default function Home() {
       try {
         setLoading(true);
         const data = await getUserSmoothies();
-        setSmoothies(data);
+        setSmoothies(data || []);
       } catch (err) {
         setError(
           err instanceof Error ? err.message : 'Failed to load smoothies'
