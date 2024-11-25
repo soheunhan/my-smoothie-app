@@ -12,13 +12,11 @@ export async function signin(username: string) {
   try {
     const sql = neon(process.env.DATABASE_URL!);
 
-    // Check if user exists
     let user = await sql`
         SELECT user_id, username, created_at
         FROM users 
         WHERE username = ${username}`;
 
-    // If user doesn't exist, create new user
     if (user.length === 0) {
       user = await sql`
           INSERT INTO users (username)

@@ -1,6 +1,7 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+
 import SmoothieList from '@/components/layout/SmoothieList';
 import SmoothieForm from '@/components/layout/SmoothieForm';
 import { Smoothie } from '@/lib/types/smoothie';
@@ -16,6 +17,7 @@ export default function Home() {
   const [, setError] = useState<string | null>(null);
   const router = useRouter();
 
+  // Fetch smoothies on component mount
   useEffect(() => {
     const fetchSmoothies = async () => {
       try {
@@ -35,6 +37,7 @@ export default function Home() {
     fetchSmoothies();
   }, []);
 
+  // Handlers for CRUD operations
   const handleAddSmoothie = (newSmoothie: Smoothie) => {
     setSmoothies((prev) => [...prev, newSmoothie]);
   };

@@ -7,10 +7,12 @@ import { cookies } from 'next/headers';
 export async function deleteAuthCookie() {
   (await cookies()).delete('user_id');
 }
+
 export async function getUserSmoothies() {
   const userId = (await cookies()).get('user_id')?.value;
   if (userId) {
     const sql = neon(process.env.DATABASE_URL as string);
+    // Query to get smoothies with nested ingredients in json format
     const [response] = await sql`WITH ingredient_list AS (
     SELECT 
       s.smoothie_id,
@@ -41,6 +43,7 @@ export async function getUserSmoothies() {
   }
 }
 
+// Creates or updates a smoothie with ingredients
 export async function addSmoothies({
   smoothieId,
   name,
@@ -54,6 +57,7 @@ export async function addSmoothies({
   }
 
   try {
+    // Create new smoothie if no ID provided
     if (!smoothieId) {
       const [newSmoothie] =
         await sql`INSERT INTO smoothies (name, user_id) VALUES (${name}, ${+userId})
@@ -62,18 +66,19 @@ export async function addSmoothies({
       smoothieId = newSmoothie.smoothie_id;
     }
 
+    // Update existing smoothie name
     if (smoothieId) {
       await sql`
       UPDATE smoothies
-      SET name = ${name}
+      SET name = ${name}, updated_at = CURRENT_TIMESTAMP
       WHERE smoothies.user_id = ${+userId} AND smoothies.smoothie_id = ${smoothieId}`;
 
+      // Remove old ingredients
       await sql`
           DELETE FROM smoothie_ingredients 
           WHERE smoothie_id = ${smoothieId}`;
     }
 
-    // Add updated ingredients
     for (const ingredient of ingredients) {
       const [ing] = await sql`
           INSERT INTO ingredient (ingredient_name)
@@ -83,7 +88,6 @@ export async function addSmoothies({
           RETURNING ingredient_id
         `;
 
-      // Create new smoothie-ingredient relationship
       await sql`
           INSERT INTO smoothie_ingredients 
           (smoothie_id, ingredient_id, amount, unit)
@@ -106,6 +110,7 @@ export async function deleteSmoothie(smoothieId: number | null) {
   if (smoothieId) {
     const sql = neon(process.env.DATABASE_URL as string);
 
+    // Delete ingredients first due to foreign key constraints
     await sql`
     DELETE FROM smoothie_ingredients 
     WHERE smoothie_id = ${smoothieId}`;

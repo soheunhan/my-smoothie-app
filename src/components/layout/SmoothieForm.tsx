@@ -7,7 +7,7 @@ type SmoothieFormProps = {
   initialSmoothie?: Smoothie;
   handleAddSmoothie: (smoothie: Smoothie) => void;
   handleCancel?: () => void;
-  existingSmoothies: Smoothie[]; // New prop to check for duplicate names
+  existingSmoothies: Smoothie[];
 };
 
 export default function SmoothieForm({
@@ -25,6 +25,7 @@ export default function SmoothieForm({
 
   const units = ['cup(s)', 'oz', 'tbsp(s)'];
 
+  // Initialize form with existing smoothie data if provided
   useEffect(() => {
     if (initialSmoothie) {
       setName(initialSmoothie.name);
@@ -32,15 +33,17 @@ export default function SmoothieForm({
     }
   }, [initialSmoothie]);
 
+  // Name Validation
   const checkDuplicateName = (smoothieName: string): boolean => {
     const normalizedName = smoothieName.trim().toLowerCase();
     return existingSmoothies.some(
       (smoothie) =>
         smoothie.name.toLowerCase() === normalizedName &&
-        smoothie.smoothieId !== initialSmoothie?.smoothieId // Exclude current smoothie when editing
+        smoothie.smoothieId !== initialSmoothie?.smoothieId
     );
   };
 
+  // Form input handlers
   const handleNameChange = (newName: string) => {
     setName(newName);
     setNameError('');
@@ -74,10 +77,12 @@ export default function SmoothieForm({
     setIngredients(newIngredients);
   };
 
+  // Form submission handler
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setSubmitError('');
 
+    // Validate inputs
     if (!name.trim()) {
       setSubmitError('Please enter a smoothie name');
       return;
@@ -96,6 +101,7 @@ export default function SmoothieForm({
       return;
     }
 
+    // Save smoothie and reset states form if new
     const smoothieId = initialSmoothie ? initialSmoothie.smoothieId : null;
     await addSmoothies({ smoothieId, name, ingredients });
     handleAddSmoothie({ smoothieId, name, ingredients });

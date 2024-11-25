@@ -18,7 +18,8 @@ export default function SmoothieList({
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
 
-  if (smoothies.length === 0) {
+  // No Smoothie handling
+  if (!smoothies || smoothies.length === 0) {
     return (
       <div>
         <p>No smoothies yet. Create your first recipe!</p>
@@ -26,6 +27,7 @@ export default function SmoothieList({
     );
   }
 
+  // Filter smoothies based on search
   const filteredSmoothies = smoothies.filter((smoothie) => {
     const search = searchTerm.toLowerCase().trim();
     if (!search) return true;
@@ -63,16 +65,19 @@ export default function SmoothieList({
               className="bg-foreground p-6 rounded-lg min-w-full"
             >
               {editingIndex === index ? (
+                // Edit mode
                 <SmoothieForm
                   initialSmoothie={smoothie}
                   handleAddSmoothie={(editedSmoothie) => {
                     handleUpdateSmoothie(index, editedSmoothie);
                     setEditingIndex(null);
+                    setExpandedIndex(index);
                   }}
                   handleCancel={() => setEditingIndex(null)}
                   existingSmoothies={smoothies}
                 />
               ) : (
+                // View mode
                 <div className="flex gap-6 justify-between">
                   <h3>{smoothie.name}</h3>
                   <div className="flex items-center gap-2 font-bold">

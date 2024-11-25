@@ -1,7 +1,10 @@
---------------------------------------------------------------------------------
+URL to My Smoothie App: https://master.d1cun5ihzeg7bb.amplifyapp.com/
 
-Higharc Frontend Engineer Challenge
------------------------------------
+Github Repo: https://github.com/soheunhan/my-smoothie-app
+
+---
+
+## Higharc Frontend Engineer Challenge
 
 Thank you for taking the time to complete Higharc's Frontend Engineering
 Challenge. We hope you can use this as an opportunity to showcase your
@@ -15,51 +18,52 @@ Time available: 7 days
 
 According to Wikipedia:
 
-> *A smoothie is a thick and creamy beverage made from pureed raw fruit,
+> _A smoothie is a thick and creamy beverage made from pureed raw fruit,
 > vegetables, and sometimes dairy products (e.g. milk, yogurt, ice-cream
-> or cottage cheese), typically using a blender.*
+> or cottage cheese), typically using a blender._
 
 **Your task is to build a webpage where a user can create and manage
 their own smoothie recipes.**
 
 #### Basic requirements
 
--   User can create a new smoothie with:
+- User can create a new smoothie with:
 
-    -   A unique name
+  - A unique name
 
-    -   A set of ingredients w/ quantity information (e.g. 1 cup)
+  - A set of ingredients w/ quantity information (e.g. 1 cup)
 
--   User can delete a smoothie
+- User can delete a smoothie
 
--   User can edit an existing smoothie name, ingredients
+- User can edit an existing smoothie name, ingredients
 
--   User can return to their smoothies in a new browser session using,
-    > for example, Window.localStorage
+- User can return to their smoothies in a new browser session using,
 
--   **Deliverable**: A website and a corresponding Github repo are
-    > available at a public URL
+  > for example, Window.localStorage
+
+- **Deliverable**: A website and a corresponding Github repo are
+  > available at a public URL
 
 #### Advanced requirements (optional)
 
--   User can search smoothies by name
+- User can search smoothies by name
 
--   User can tag their smoothies
+- User can tag their smoothies
 
--   User can save their smoothies to a database
+- User can save their smoothies to a database
 
--   User can share smoothies with others at public URL
+- User can share smoothies with others at public URL
 
--   User can to add new ingredients
+- User can to add new ingredients
 
--   Integrate a continuous integration/deployment system
+- Integrate a continuous integration/deployment system
 
 Bonus (optional)
 
--   What other feature would you like to add to your smoothie
-    > application? Feel free to be creative.
+- What other feature would you like to add to your smoothie
+  > application? Feel free to be creative.
 
-#### 
+####
 
 #### **Frequently Asked Questions:**
 
